@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ChiHao ⚡️ 4 AI Tối Thượng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --pri: #ff6b9d; --bg: #1a0b12; --txt: #fff; --sub: #ffb3c6; --box: rgba(40,15,25,0.75); --br: rgba(255,179,198,0.3); --win: #00ff88; --lose: #ff3333; --grad: linear-gradient(135deg, #ff6b9d, #d3215a); --primary-glow: rgba(255, 107, 157, 0.5); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        body { background: var(--bg); color: var(--txt); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        .bg { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,107,157,0.15) 0%, rgba(20,5,10,1) 60%); animation: rot 25s linear infinite; z-index: -1; }
+        @keyframes rot { 100% { transform: rotate(360deg); } }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--pri); color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 800; display: none; z-index: 1000; box-shadow: 0 5px 15px var(--primary-glow); }
+        
+        #s-key { display: flex; height: 100vh; width: 100%; align-items: center; justify-content: center; padding: 20px; }
+        .key-box { background: var(--box); backdrop-filter: blur(15px); border: 2px solid var(--pri); padding: 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 350px; box-shadow: 0 0 30px var(--primary-glow); }
+        .key-box h2 { font-family: 'Orbitron'; color: var(--pri); margin-bottom: 20px; }
+        .key-inp { width: 100%; padding: 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--br); border-radius: 10px; color: #fff; text-align: center; font-weight: 700; margin-bottom: 15px; }
+        .btn-key { width: 100%; padding: 15px; background: var(--grad); color: #fff; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; }
+
+        #s-menu { display: none; flex-direction: column; width: 100%; max-width: 500px; height: 100vh; justify-content: center; padding: 20px; }
+        .menu-title { font-family: 'Orbitron'; font-size: 2rem; font-weight: 900; text-align: center; margin-bottom: 40px; color: #fff; text-shadow: 0 0 20px var(--primary-glow); }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .menu-item { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 2px solid var(--br); border-radius: 25px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .menu-item:active { transform: scale(0.95); border-color: var(--pri); }
+        .menu-item i { font-size: 3rem; color: var(--pri); margin-bottom: 15px; }
+        .menu-item span { font-weight: 800; font-size: 1.1rem; color: #fff; }
+
+        .sandbox { display: none; flex-direction: column; width: 100%; max-width: 500px; padding: 15px; gap: 12px; margin-bottom: 30px; }
+        .sandbox.active { display: flex; animation: fIn 0.3s; }
+        @keyframes fIn { from { opacity: 0; } to { opacity: 1; } }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        .btn-back { background: rgba(255,255,255,0.1); border: 1px solid var(--br); color: #fff; padding: 8px 15px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+        .title { font-family: 'Orbitron'; font-size: 1.2rem; color: var(--pri); font-weight: 900; }
+        
+        .grid-wrap { background: #000; border-radius: 15px; padding: 10px; border: 2px solid var(--br); height: 200px; overflow-y: auto; position: relative; }
+        .grid-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+        .grid-cell { aspect-ratio: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; color: #fff; }
+        .grid-cell.b { background: #ff4757; } .grid-cell.p { background: #3498db; } .grid-cell.t { background: #2ecc71; }
+        .grid-cell.tai { background: #111; border: 1px solid #555; } .grid-cell.xiu { background: #fff; color: #000; }
+        .btn-group-top { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; z-index: 10; }
+        .btn-undo { background: rgba(255,255,255,0.2); border: 1px solid #fff; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+        .btn-rst { background: rgba(255,0,0,0.4); border: 1px solid #fff; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+
+        .load-box { display: none; flex-direction: column; align-items: center; margin: 5px 0; }
+        .load-bar { width: 250px; height: 25px; background: #fff; border: 2px solid var(--pri); display: flex; padding: 2px; gap: 2px; border-radius: 4px; }
+        .load-block { width: 10%; height: 100%; background: var(--pri); opacity: 0; transition: 0.1s; }
+        .load-text { font-family: 'Orbitron'; font-size: 1rem; font-weight: 900; color: var(--pri); margin-top: 5px; letter-spacing: 5px; }
+
+        .circles { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 15px; display: flex; justify-content: space-around; border: 1px solid var(--br); }
+        .c-btn { width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 1.4rem; font-weight: 900; color: #fff; cursor: pointer; box-shadow: 0 6px 0 rgba(0,0,0,0.4); transition: 0.1s; display: flex; align-items: center; justify-content: center; }
+        .c-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
+        .c-b { background: radial-gradient(circle at 30% 30%, #ff7f8a, #ff4757); } .c-p { background: radial-gradient(circle at 30% 30%, #74b9ff, #3498db); } .c-t { background: radial-gradient(circle at 30% 30%, #55efc4, #00b894); }
+        .c-tai { background: radial-gradient(circle at 30% 30%, #ff7f8a, #ff4757); } .c-xiu { background: radial-gradient(circle at 30% 30%, #ffffff, #b2bec3); color: #000; }
+
+        .btn-run { width: 100%; padding: 15px; background: var(--grad); color: #fff; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 900; cursor: pointer; margin-top: 5px; text-transform: uppercase; box-shadow: 0 5px 15px var(--primary-glow); }
+        .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .ai-tabs { display: flex; gap: 4px; margin-top: 10px; margin-bottom: -1px; z-index: 2; position: relative; overflow-x: auto; }
+        .ai-tab { flex: 1; padding: 10px 5px; text-align: center; font-weight: 800; font-size: 0.65rem; background: rgba(0,0,0,0.5); border: 1px solid var(--br); border-bottom: none; border-radius: 10px 10px 0 0; cursor: pointer; color: #888; white-space: nowrap; }
+        .ai-tab.active { background: var(--box); color: var(--pri); border-color: var(--pri); border-bottom: 1px solid var(--box); transform: translateY(1px); }
+        .ai-tab.total.active { color: #fff; background: var(--grad); border-color: #fff; }
+
+        .result-container { background: var(--box); backdrop-filter: blur(15px); border: 1px solid var(--pri); border-radius: 0 0 15px 15px; padding: 15px; min-height: 160px; display: none; flex-direction: column; }
+        .ai-panel { display: none; } .ai-panel.active { display: block; }
+        .ai-pred-title { font-family: 'Orbitron'; font-size: 0.9rem; font-weight: 900; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .ai-pred-title span { color: var(--pri); }
+        .pred-box { font-size: 2rem; font-weight: 900; text-align: center; margin: 10px 0; }
+        .pred-box.b { color: #ff4757; } .pred-box.p { color: #3498db; } .pred-box.tai { color: #fff; } .pred-box.xiu { color: #fff; }
+        .pred-box.total-box { color: #fff; background: var(--grad); padding: 10px; border-radius: 10px; display: inline-block; margin: 0 auto; }
+        .ai-stats { display: flex; gap: 10px; font-size: 0.8rem; font-weight: 700; color: var(--sub); justify-content: center; margin-bottom: 10px; }
+        .ai-reason { font-size: 0.8rem; font-style: italic; color: #ccc; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border-left: 3px solid var(--pri); line-height: 1.5; }
+
+        .hist-box { background: var(--box); border: 1px solid var(--br); border-radius: 15px; padding: 10px; max-height: 120px; overflow-y: auto; margin-top: 10px; }
+        .hist-title { font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; color: var(--pri); text-transform: uppercase; }
+        .hist-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="toast" id="toast">Thông báo</div>
+
+    <div id="s-key">
+        <div class="key-box">
+            <h2>KEY GATE</h2>
+            <input type="text" id="key-inp" class="key-inp" placeholder="Nhập Key...">
+            <button class="btn-key" onclick="App.checkKey()">KÍCH HOẠT</button>
+            <div id="key-err" style="color:var(--lose); font-weight:800; font-size:0.85rem; margin-top:10px; display:none;">Key không hợp lệ!</div>
+        </div>
+    </div>
+
+    <div id="s-menu">
+        <div class="menu-title">ChiHao BCR 🔥</div>
+        <div class="menu-grid">
+            <div class="menu-item" onclick="App.open('bcr')"><i class="fas fa-clone"></i><span>Baccarat</span></div>
+            <div class="menu-item" onclick="App.open('tx')"><i class="fas fa-dice"></i><span>Tài Xỉu</span></div>
+            <div class="menu-item" onclick="App.toast('Đang cập nhật')"><i class="fas fa-user-circle"></i><span>Tài Khoản</span></div>
+            <div class="menu-item" onclick="App.toast('Đang cập nhật')"><i class="fas fa-cog"></i><span>Cài Đặt</span></div>
+        </div>
+    </div>
+
+    <div id="sb-bcr" class="sandbox">
+        <div class="top-bar">
+            <button class="btn-back" onclick="App.back()"><i class="fas fa-arrow-left"></i> Menu</button>
+            <div class="title">BACCARAT</div>
+        </div>
+        <div class="grid-wrap">
+            <div class="btn-group-top">
+                <button class="btn-undo" onclick="Game.undo('bcr')"><i class="fas fa-undo"></i> Back</button>
+                <button class="btn-rst" onclick="Game.reset('bcr')">Reset</button>
+            </div>
+            <div class="grid-container" id="grid-bcr"></div>
+        </div>
+        
+        <div class="load-box" id="load-bcr"><div class="load-bar" id="bar-bcr"></div><div class="load-text">LOADING</div></div>
+        
+        <div class="circles">
+            <button class="c-btn c-p" onclick="Game.input('bcr', 'P')">P</button>
+            <button class="c-btn c-t" onclick="Game.input('bcr', 'T')">T</button>
+            <button class="c-btn c-b" onclick="Game.input('bcr', 'B')">B</button>
+        </div>
+
+        <button class="btn-run" id="btn-run-bcr" onclick="Game.runAnalysis('bcr')">PHÂN TÍCH 4 AI</button>
+
+        <div class="ai-tabs" id="tabs-bcr" style="display:none;">
+            <div class="ai-tab active" onclick="Game.switchAITab('bcr', 0)">Markov</div>
+            <div class="ai-tab" onclick="Game.switchAITab('bcr', 1)">Sigmoid</div>
+            <div class="ai-tab" onclick="Game.switchAITab('bcr', 2)">Poisson</div>
+            <div class="ai-tab" onclick="Game.switchAITab('bcr', 3)">Toán Học</div>
+            <div class="ai-tab total" onclick="Game.switchAITab('bcr', 4)">TỔNG HỢP</div>
+        </div>
+
+        <div class="result-container" id="res-bcr">
+            <div class="ai-panel active" id="panel-bcr-0">
+                <div class="ai-pred-title">AI-01 Markov (Bậc 2)</div>
+                <div class="pred-box" id="pred1-bcr">-</div>
+                <div class="ai-stats"><span>Xác suất: <b id="r1-bcr">-</b></span></div>
+                <div class="ai-reason" id="rs1-bcr">-</div>
+            </div>
+            <div class="ai-panel" id="panel-bcr-1">
+                <div class="ai-pred-title">AI-02 Sigmoid (Logistic)</div>
+                <div class="pred-box" id="pred2-bcr">-</div>
+                <div class="ai-stats"><span>Xác suất: <b id="r2-bcr">-</b></span></div>
+                <div class="ai-reason" id="rs2-bcr">-</div>
+            </div>
+            <div class="ai-panel" id="panel-bcr-2">
+                <div class="ai-pred-title">AI-03 Poisson (Tần suất)</div>
+                <div class="pred-box" id="pred3-bcr">-</div>
+                <div class="ai-stats"><span>Xác suất: <b id="r3-bcr">-</b></span></div>
+                <div class="ai-reason" id="rs3-bcr">-</div>
+            </div>
+            <div class="ai-panel" id="panel-bcr-3">
+                <div class="ai-pred-title">AI-04 Toán Học (Heron & Căn)</div>
+                <div class="pred-box" id="pred4-bcr">-</div>
+                <div class="ai-stats"><span>Hệ số: <b id="r4-bcr">-</b></span></div>
+                <div class="ai-reason" id="rs4-bcr">-</div>
+            </div>
+            <div class="ai-panel" id="panel-bcr-4">
+                <div class="ai-pred-title" style="justify-content:center;">KẾT QUẢ TỔNG HỢP</div>
+                <div style="text-align:center;"><div class="pred-box total-box" id="predT-bcr">-</div></div>
+                <div class="ai-stats" style="margin-top:10px;"><span>Tổng điểm: <b id="rT-bcr">-</b></span></div>
+                <div class="ai-reason" id="rsT-bcr">-</div>
+            </div>
+        </div>
+
+        <div class="hist-box">
+            <div class="hist-title">Lịch Sử Phiên</div>
+            <div id="hist-list-bcr"></div>
+        </div>
+    </div>
+
+    <div id="sb-tx" class="sandbox">
+        <div class="top-bar">
+            <button class="btn-back" onclick="App.back()"><i class="fas fa-arrow-left"></i> Menu</button>
+            <div class="title">TÀI XỈU</div>
+        </div>
+        <div class="grid-wrap">
+            <div class="btn-group-top">
+                <button class="btn-undo" onclick="Game.undo('tx')"><i class="fas fa-undo"></i> Back</button>
+                <button class="btn-rst" onclick="Game.reset('tx')">Reset</button>
+            </div>
+            <div class="grid-container" id="grid-tx"></div>
+        </div>
+        
+        <div class="load-box" id="load-tx"><div class="load-bar" id="bar-tx"></div><div class="load-text">LOADING</div></div>
+
+        <div class="circles" style="justify-content: center; gap: 20px;">
+            <button class="c-btn c-xiu" onclick="Game.input('tx', 'X')">X</button>
+            <button class="c-btn c-tai" onclick="Game.input('tx', 'T')">T</button>
+        </div>
+
+        <button class="btn-run" id="btn-run-tx" onclick="Game.runAnalysis('tx')">PHÂN TÍCH 4 AI</button>
+
+        <div class="ai-tabs" id="tabs-tx" style="display:none;">
+            <div class="ai-tab active" onclick="Game.switchAITab('tx', 0)">Markov</div>
+            <div class="ai-tab" onclick="Game.switchAITab('tx', 1)">Sigmoid</div>
+            <div class="ai-tab" onclick="Game.switchAITab('tx', 2)">Poisson</div>
+            <div class="ai-tab" onclick="Game.switchAITab('tx', 3)">Toán Học</div>
+            <div class="ai-tab total" onclick="Game.switchAITab('tx', 4)">TỔNG HỢP</div>
+        </div>
+
+        <div class="result-container" id="res-tx">
+            <div class="ai-panel active" id="panel-tx-0">
+                <div class="ai-pred-title">AI-01 Markov</div>
+                <div class="pred-box" id="pred1-tx">-</div>
+                <div class="ai-stats"><span>Xác suất: <b id="r1-tx">-</b></span></div>
+                <div class="ai-reason" id="rs1-tx">-</div>
+            </div>
+            <div class="ai-panel" id="panel-tx-1">
+                <div class="ai-pred-title">AI-02 Sigmoid</div>
+                <div class="pred-box" id="pred2-tx">-</div>
+                <div class="ai-stats"><span>Xác suất: <b id="r2-tx">-</b></span></div>
+                <div class="ai-reason" id="rs2-tx">-</div>
+            </div>
+            <div class="ai-panel" id="panel-tx-2">
+                <div class="ai-pred-title">AI-03 Poisson</div>
+                <div class="pred-box" id="pred3-tx">-</div>
+                <div class="ai-stats"><span>Xác suất: <b id="r3-tx">-</b></span></div>
+                <div class="ai-reason" id="rs3-tx">-</div>
+            </div>
+            <div class="ai-panel" id="panel-tx-3">
+                <div class="ai-pred-title">AI-04 Toán Học</div>
+                <div class="pred-box" id="pred4-tx">-</div>
+                <div class="ai-stats"><span>Hệ số: <b id="r4-tx">-</b></span></div>
+                <div class="ai-reason" id="rs4-tx">-</div>
+            </div>
+            <div class="ai-panel" id="panel-tx-4">
+                <div class="ai-pred-title" style="justify-content:center;">KẾT QUẢ TỔNG HỢP</div>
+                <div style="text-align:center;"><div class="pred-box total-box" id="predT-tx">-</div></div>
+                <div class="ai-stats" style="margin-top:10px;"><span>Tổng điểm: <b id="rT-tx">-</b></span></div>
+                <div class="ai-reason" id="rsT-tx">-</div>
+            </div>
+        </div>
+
+        <div class="hist-box">
+            <div class="hist-title">Lịch Sử Phiên</div>
+            <div id="hist-list-tx"></div>
+        </div>
+    </div>
+
+    <script>
+        const App = {
+            keys: ["ChiHaoBCR", "HaoCuTe8386"],
+            checkKey: () => {
+                let k = document.getElementById('key-inp').value.trim();
+                if(App.keys.includes(k)) {
+                    document.getElementById('s-key').style.display = 'none';
+                    document.getElementById('s-menu').style.display = 'flex';
+                } else {
+                    document.getElementById('key-err').style.display = 'block';
+                }
+            },
+            open: (t) => {
+                document.getElementById('s-menu').style.display = 'none';
+                document.getElementById('sb-' + t).classList.add('active');
+                Game.init(t);
+            },
+            back: () => {
+                document.querySelectorAll('.sandbox').forEach(el => el.classList.remove('active'));
+                document.getElementById('s-menu').style.display = 'flex';
+            },
+            toast: (m) => {
+                let t = document.getElementById('toast');
+                t.innerText = m; t.style.display = 'block';
+                setTimeout(() => t.style.display = 'none', 2000);
+            }
+        };
+
+        const Game = {
+            state: {
+                bcr: { hist: [], preds: [null, null, null, null], finalPred: null, sessions: [] },
+                tx:  { hist: [], preds: [null, null, null, null], finalPred: null, sessions: [] }
+            },
+            init: (t) => {
+                let g = document.getElementById('grid-' + t);
+                g.innerHTML = '';
+                for(let i=0; i<100; i++) { let c=document.createElement('div'); c.className='grid-cell'; g.appendChild(c); }
+                Game.drawGrid(t);
+                Game.drawHist(t);
+                document.getElementById('res-' + t).style.display = 'none';
+                document.getElementById('tabs-' + t).style.display = 'none';
+                document.getElementById('btn-run-' + t).disabled = true;
+                Game.state[t].preds = [null, null, null, null];
+                Game.state[t].finalPred = null;
+            },
+            switchAITab: (t, idx) => {
+                document.querySelectorAll(`#tabs-${t} .ai-tab`).forEach((tab, i) => {
+                    if(i === idx) tab.classList.add('active'); else tab.classList.remove('active');
+                });
+                document.querySelectorAll(`#res-${t} .ai-panel`).forEach((panel, i) => {
+                    if(i === idx) panel.classList.add('active'); else panel.classList.remove('active');
+                });
+            },
+            input: (t, v) => {
+                let s = Game.state[t];
+                if(s.finalPred !== null) {
+                    let win = (v === s.finalPred);
+                    if(win) {
+                        s.sessions.unshift({ status: "Thắng" });
+                        App.toast("🎉 CHÍNH XÁC!");
+                    } else {
+                        s.sessions.unshift({ status: "Thua" });
+                        App.toast("❌ SAI RỒI!");
+                    }
+                    s.hist.push(v); if(s.hist.length > 100) s.hist.shift();
+                    Game.drawGrid(t); Game.drawHist(t);
+                    
+                    s.preds = [null, null, null, null]; s.finalPred = null;
+                    document.getElementById('res-' + t).style.display = 'none';
+                    document.getElementById('tabs-' + t).style.display = 'none';
+                    document.getElementById('btn-run-' + t).disabled = false;
+                } else {
+                    if(s.hist.length >= 100) return App.toast("Bảng đã đầy!");
+                    s.hist.push(v); Game.drawGrid(t);
+                    if(s.hist.length >= 3) document.getElementById('btn-run-' + t).disabled = false;
+                }
+            },
+            runAnalysis: (t) => {
+                let s = Game.state[t];
+                if(s.hist.length < 3) return App.toast("Cần ít nhất 3 cầu để phân tích!");
+                
+                document.getElementById('btn-run-' + t).disabled = true;
+                document.getElementById('res-' + t).style.display = 'none';
+                document.getElementById('tabs-' + t).style.display = 'none';
+                document.getElementById('load-' + t).style.display = 'flex';
+                
+                let bar = document.getElementById('bar-' + t); bar.innerHTML = '';
+                for(let i=0; i<10; i++) { let b=document.createElement('div'); b.className='load-block'; bar.appendChild(b); }
+                
+                let count = 0; let blocks = bar.querySelectorAll('.load-block');
+                let intv = setInterval(() => {
+                    if(count < 10) { blocks[count].style.opacity = '1'; count++; }
+                    else { clearInterval(intv); document.getElementById('load-' + t).style.display='none'; Game.showRes(t); }
+                }, 200);
+            },
+            showRes: (t) => {
+                let s = Game.state[t]; let h = s.hist; let isB = (t === 'bcr');
+                let main = isB ? 'B' : 'T'; let sec = isB ? 'P' : 'X';
+                let total = h.length;
+                
+                let cM = h.filter(x => x === main).length; 
+                let cS = h.filter(x => x === sec).length;
+
+                // AI-01: MARKOV BẬC 2
+                let p1 = main, r1 = 50, rs1 = "";
+                if (total >= 2) {
+                    let last2 = h.slice(-2).join('');
+                    let countNextM = 0, countNextS = 0;
+                    for (let i=0; i<h.length-2; i++) {
+                        if (h[i] + h[i+1] === last2) {
+                            if (h[i+2] === main) countNextM++; else countNextS++;
+                        }
+                    }
+                    if (countNextM > countNextS) { p1 = main; r1 = 50 + (countNextM / (countNextM + countNextS)) * 50; rs1 = `Chuỗi ${last2} trước đây dẫn đến ${main} ${countNextM} lần, ${sec} ${countNextS} lần. Chọn ${main}.`; }
+                    else if (countNextS > countNextM) { p1 = sec; r1 = 50 + (countNextS / (countNextM + countNextS)) * 50; rs1 = `Chuỗi ${last2} trước đây dẫn đến ${sec} ${countNextS} lần, ${main} ${countNextM} lần. Chọn ${sec}.`; }
+                    else { p1 = main; r1 = 52; rs1 = `Chuỗi ${last2} chưa có dữ liệu chuyển đổi. Chọn mặc định.`; }
+                } else { p1 = main; rs1 = "Chưa đủ dữ liệu Markov."; }
+                if(r1 > 95) r1 = 95; s.preds[0] = p1;
+
+                // AI-02: SIGMOID (HỒI QUY LOGISTIC)
+                let p2 = main, r2 = 50, rs2 = "";
+                let z = 0;
+                let weights = [0.5, 0.3, 0.15, 0.05];
+                let recent = h.slice(-4);
+                for(let i=0; i<recent.length; i++) {
+                    if(recent[i] === main) z += weights[i]; else z -= weights[i];
+                }
+                let probM = 1 / (1 + Math.exp(-z));
+                let probS = 1 - probM;
+                if (probM > probS) { p2 = main; r2 = probM * 100; rs2 = `Hàm Sigmoid: z = ${z.toFixed(2)}. P(${main}) = 1/(1+e^-z) = ${(probM*100).toFixed(1)}%. Dự đoán ${main}.`; }
+                else { p2 = sec; r2 = probS * 100; rs2 = `Hàm Sigmoid: z = ${z.toFixed(2)}. P(${sec}) = 1/(1+e^-z) = ${(probS*100).toFixed(1)}%. Dự đoán ${sec}.`; }
+                if(r2 < 52) r2 = 52; if(r2 > 95) r2 = 95; s.preds[1] = p2;
+
+                // AI-03: POISSON (PHÂN PHỐI TẦN SUẤT)
+                let p3 = main, r3 = 50, rs3 = "";
+                let lambdaM = cM / total;
+                let lambdaS = cS / total;
+                if (lambdaM > lambdaS) { p3 = main; r3 = lambdaM * 100; rs3 = `Phân phối Poisson: Tần suất λ(${main}) = ${(lambdaM*100).toFixed(1)}%. Cao hơn ${sec} (${(lambdaS*100).toFixed(1)}%). Chọn ${main}.`; }
+                else { p3 = sec; r3 = lambdaS * 100; rs3 = `Phân phối Poisson: Tần suất λ(${sec}) = ${(lambdaS*100).toFixed(1)}%. Cao hơn ${main} (${(lambdaM*100).toFixed(1)}%). Chọn ${sec}.`; }
+                if(r3 < 52) r3 = 52; if(r3 > 95) r3 = 95; s.preds[2] = p3;
+
+                // AI-04: TOÁN HỌC (HERON & CĂN BẬC 2)
+                let p4 = main, r4 = 50, rs4 = "";
+                let totalPlus = total + cS + cM + 2;
+                let sqrtTotal = Math.round(Math.sqrt(totalPlus));
+                let sqrtEven = (sqrtTotal % 2 === 0);
+                
+                // Công thức Heron (Giả lập tam giác)
+                let a = total; let b = cS; let c = cM + 2; 
+                let p_heron = (a + b + c) / 2;
+                // Bất đẳng thức tam giác: p_heron phải lớn hơn mỗi cạnh
+                let area = 0;
+                if (p_heron > a && p_heron > b && p_heron > c) {
+                    area = Math.sqrt(p_heron * (p_heron - a) * (p_heron - b) * (p_heron - c));
+                }
+                let heronInt = isNaN(area) ? 0 : Math.floor(area);
+                let heronEven = (heronInt % 2 === 0);
+                
+                let scoreEven = (sqrtEven ? 1 : 0) + (heronEven ? 1 : 0);
+                
+                // Quy tắc 1-4 Con, 5-9 Cái. Số chẵn -> Con, Số lẻ -> Cái
+                if (scoreEven >= 1) {
+                    p4 = main; // Số chẵn -> Con (Player/Banker tùy bàn)
+                    rs4 = `Toán học: Tổng = ${totalPlus}. Căn bậc 2 = ${sqrtTotal} (${sqrtEven?'Chẵn':'Lẻ'}). Diện tích Heron = ${heronInt} (${heronEven?'Chẵn':'Lẻ'}). Quyết định chọn ${p4} (Chẵn).`;
+                } else {
+                    p4 = sec; // Số lẻ -> Cái
+                    rs4 = `Toán học: Tổng = ${totalPlus}. Căn bậc 2 = ${sqrtTotal} (${sqrtEven?'Chẵn':'Lẻ'}). Diện tích Heron = ${heronInt} (${heronEven?'Chẵn':'Lẻ'}). Quyết định chọn ${p4} (Lẻ).`;
+                }
+                if(r4 > 95) r4 = 95; s.preds[3] = p4;
+
+                // TỔNG HỢP
+                let scoreM = 0, scoreS = 0;
+                if (p1 === main) scoreM += r1; else scoreS += r1;
+                if (p2 === main) scoreM += r2; else scoreS += r2;
+                if (p3 === main) scoreM += r3; else scoreS += r3;
+                if (p4 === main) scoreM += r4; else scoreS += r4;
+
+                let finalP = scoreM >= scoreS ? main : sec;
+                let rsT = `Tổng điểm ${main}: ${scoreM.toFixed(1)} | ${sec}: ${scoreS.toFixed(1)}. Chọn ${finalP}.`;
+                s.finalPred = finalP;
+
+                // Update UI
+                document.getElementById('pred1-'+t).innerText = p1;
+                document.getElementById('pred1-'+t).className = 'pred-box ' + (p1===main ? (isB?'b':'tai') : (isB?'p':'xiu'));
+                document.getElementById('r1-'+t).innerText = r1.toFixed(1) + '%';
+                document.getElementById('rs1-'+t).innerText = rs1;
+
+                document.getElementById('pred2-'+t).innerText = p2;
+                document.getElementById('pred2-'+t).className = 'pred-box ' + (p2===main ? (isB?'b':'tai') : (isB?'p':'xiu'));
+                document.getElementById('r2-'+t).innerText = r2.toFixed(1) + '%';
+                document.getElementById('rs2-'+t).innerText = rs2;
+
+                document.getElementById('pred3-'+t).innerText = p3;
+                document.getElementById('pred3-'+t).className = 'pred-box ' + (p3===main ? (isB?'b':'tai') : (isB?'p':'xiu'));
+                document.getElementById('r3-'+t).innerText = r3.toFixed(1) + '%';
+                document.getElementById('rs3-'+t).innerText = rs3;
+
+                document.getElementById('pred4-'+t).innerText = p4;
+                document.getElementById('pred4-'+t).className = 'pred-box ' + (p4===main ? (isB?'b':'tai') : (isB?'p':'xiu'));
+                document.getElementById('r4-'+t).innerText = "Hệ số: " + r4;
+                document.getElementById('rs4-'+t).innerText = rs4;
+
+                document.getElementById('predT-'+t).innerText = finalP;
+                document.getElementById('predT-'+t).className = 'pred-box total-box';
+                document.getElementById('rT-'+t).innerText = `${scoreM.toFixed(1)} (${main}) - ${scoreS.toFixed(1)} (${sec})`;
+                document.getElementById('rsT-'+t).innerText = rsT;
+
+                document.getElementById('res-' + t).style.display = 'flex';
+                document.getElementById('tabs-' + t).style.display = 'flex';
+                Game.switchAITab(t, 4);
+            },
+            drawGrid: (t) => {
+                let s = Game.state[t]; let cells = document.querySelectorAll(`#grid-${t} .grid-cell`);
+                cells.forEach(c => { c.className = 'grid-cell'; c.innerText = ''; });
+                s.hist.forEach((v, i) => {
+                    if(i < cells.length) { cells[i].className = 'grid-cell ' + v.toLowerCase(); cells[i].innerText = v; }
+                });
+            },
+            drawHist: (t) => {
+                let s = Game.state[t]; let list = document.getElementById('hist-list-' + t); list.innerHTML = '';
+                if(s.sessions.length === 0) return list.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:#888;">Chưa có lịch sử.</div>';
+                s.sessions.forEach(item => {
+                    let d = document.createElement('div'); d.className = 'hist-item';
+                    let cls = item.status === 'Thắng' ? 'style="color:var(--win)"' : 'style="color:var(--lose)"';
+                    d.innerHTML = `<span>Phiên</span><span ${cls}>${item.status}</span>`;
+                    list.appendChild(d);
+                });
+            },
+            undo: (t) => {
+                let s = Game.state[t];
+                if(s.hist.length > 0) { s.hist.pop(); Game.drawGrid(t); }
+                else { App.toast("Không có cầu để xóa!"); }
+            },
+            reset: (t) => {
+                if(confirm("Xóa toàn bộ cầu và làm mới?")) {
+                    Game.state[t] = { hist: [], preds: [null, null, null, null], finalPred: null, sessions: [] };
+                    Game.init(t);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
